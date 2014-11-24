@@ -33,34 +33,36 @@
 
     DayMonthYearCalendar = (function() {
 
-        DayMonthYearCalendar.prototype.options = {
-            minDate: new Date(new Date().setFullYear(new Date().getFullYear() - 100))
-            , maxDate: new Date(new Date().setFullYear(new Date().getFullYear() + 100))
-            , fullMonthArray: []
-            , daysClass: 'dmy-cal-days'
-            , monthsClass: 'dmy-cal-months'
-            , yearsClass: 'dmy-cal-years'
-            , daysEmptyText: 'dd'
-            , monthsEmptyText: 'mm'
-            , yearsEmptyText: 'yyyy'
-            , hideInput: true
-        };
-
-        function DayMonthYearCalendar(form_field, options) {
+        function DayMonthYearCalendar(form_field, opt) {
             this.form_field = form_field;
             this.form_field_jq = $(form_field);
-            this.setup_options(options);
+            this.setup_options(opt);
             this.setup_html();
         };
 
-        DayMonthYearCalendar.prototype.setup_options = function(options) {
+        DayMonthYearCalendar.prototype.setup_options = function(opt) {
+            this.options = {
+                minDate: new Date(new Date().setFullYear(new Date().getFullYear() - 100))
+                , maxDate: new Date(new Date().setFullYear(new Date().getFullYear() + 100))
+                , monthNames: []
+                , daysClass: 'dmy-cal-days'
+                , monthsClass: 'dmy-cal-months'
+                , yearsClass: 'dmy-cal-years'
+                , daysEmptyText: 'dd'
+                , monthsEmptyText: 'mm'
+                , yearsEmptyText: 'yyyy'
+                , hideInput: true
+            };
             this.options.disabled = this.form_field_jq.prop('disabled');
             var container_props = {
                     'class': this.form_field.className
                 };
             this.options.container = $("<div />", container_props);
-            $.extend(this.options, options);
+            $.extend(this.options, opt);
             this.container = this.options.container;
+            if (!opt.container) {
+                this.form_field_jq.parent().append(this.container);
+            }
         };
 
         DayMonthYearCalendar.prototype.setup_html = function() {
@@ -77,9 +79,10 @@
                 + '<div class="' + this.options.yearsClass + '">'
                 + '  <select id="' + yearsId + '"></select>'
                 + '</div>');
-            this.years = this.container.find('#' + yearsId);
-            this.months = this.container.find('#' + monthsId);
-            this.days = this.container.find('#' + daysId);
+            
+            this.years = $(document.getElementById(yearsId));
+            this.months = $(document.getElementById(monthsId));
+            this.days = $(document.getElementById(daysId));
 
 
             this.years.append($('<option selected value="0">' + this.options.yearsEmptyText + '</option>'));
@@ -87,14 +90,13 @@
                 this.years.append($('<option />').val(i).html(i));
             }
 
-            this.append_options(this.months, 1, 12, this.options.fullMonthArray, this.options.monthsEmptyText);
+            this.append_options(this.months, 1, 12, this.options.monthNames, this.options.monthsEmptyText);
 
             this.append_options(this.days, 1, 31, [], this.options.daysEmptyText);
             
             if (this.options.hideInput) {
                 this.form_field_jq.hide();
             }
-            this.form_field_jq.after(this.container);
 
             this.load_form_field();
 
@@ -105,8 +107,16 @@
                 _this.update_number_of_months(); 
             });
             this.container.find('select').on('change', function () {
-              _this.update_form_field();
+            	console.log(_this.options);
+            	_this.update_form_field();
             });
+            this.form_field_jq.on('change', function () {
+            	_this.container.find('select').unbind('change');
+            	_this.load_form_field();
+            	_this.container.find('select').on('change', function () {
+                    _this.update_form_field();
+                 });
+            });            
 
             this.container.find('select').prop('disabled', this.disabled);
             };
@@ -157,7 +167,7 @@
                 maxMonth = this.options.maxDate.getMonth() + 1;
             }
 
-            this.append_options(this.months, minMonth, maxMonth, this.options.fullMonthArray, this.options.monthsEmptyText);
+            this.append_options(this.months, minMonth, maxMonth, this.options.monthNames, this.options.monthsEmptyText);
 
             if (month > maxMonth) {
                 month = maxMonth;
@@ -188,11 +198,26 @@
             var value = this.form_field_jq.val();
             if (value && value.length == 10) {
                 var dateFields = value.split('.');
-                this.years.val(parseInt(dateFields[2], 10));
+                var yearValue = parseInt(dateFields[2], 10);
+                if (this.years.find('option[value="' + yearValue + '"]').length > 0) {
+                	this.years.val(yearValue);
+                } else {
+                	this.years.val(0);
+                }
                 this.update_number_of_months();
-                this.months.val(parseInt(dateFields[1], 10));
+                var monthValue = parseInt(dateFields[1], 10);
+                if (this.months.find('option[value="' + monthValue + '"]').length > 0) {
+                	this.months.val(monthValue);
+                } else {
+                	this.months.val(0);
+                }
                 this.update_number_of_days();
-                this.days.val(parseInt(dateFields[0], 10));
+                var dayValue = parseInt(dateFields[0], 10);
+                if (this.days.find('option[value="' + dayValue + '"]').length > 0) {
+                	this.days.val(dayValue);
+                } else {
+                	this.days.val(0);
+                }
             }
         };
 

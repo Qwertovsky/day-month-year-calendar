@@ -11,6 +11,7 @@
  *
  */
 
+
 (function() {
     var $, DayMonthYearCalendar;
 
@@ -29,7 +30,7 @@
             }
           });
         }
-    });	
+    }); 
 
     DayMonthYearCalendar = (function() {
 
@@ -70,7 +71,8 @@
             var daysId = this.form_field.id + 'Days';
             var monthsId = this.form_field.id + 'Months';
             var yearsId = this.form_field.id + 'Years';
-            this.container.html('<div class="' + this.options.daysClass + '">'
+            
+            this.container.prepend('<div class="' + this.options.daysClass + '">'
                 + '    <select id="' + daysId + '"></select>'
                 + '</div>'
                 + '<div class="' + this.options.monthsClass + '">'
@@ -100,26 +102,31 @@
 
             this.load_form_field();
 
-            this.months.change(function () {
-                _this.update_number_of_days(); 
-            });
-            this.years.change(function () {
-                _this.update_number_of_months(); 
-            });
-            this.container.find('select').on('change', function () {
-            	console.log(_this.options);
-            	_this.update_form_field();
-            });
+            this.bind_events();
+            
             this.form_field_jq.on('change', function () {
-            	_this.container.find('select').unbind('change');
-            	_this.load_form_field();
-            	_this.container.find('select').on('change', function () {
-                    _this.update_form_field();
-                 });
+                _this.container.find('select').unbind('change');
+                _this.load_form_field();
+                _this.bind_events();
             });            
 
             this.container.find('select').prop('disabled', this.disabled);
             };
+            
+        DayMonthYearCalendar.prototype.bind_events = function() {
+            var _this = this;
+            this.months.on('change', function () {
+                _this.update_number_of_days();
+                _this.update_form_field();
+            });
+            this.years.on('change', function () {
+                _this.update_number_of_months();
+                _this.update_form_field();
+            });
+            this.days.on('change', function () {
+                    _this.update_form_field();
+            });
+        }
 
         DayMonthYearCalendar.prototype.update_number_of_days = function() {
             var day = this.days.val() || 0;
@@ -149,6 +156,8 @@
                 day = minDay;
             }
             this.days.val(day);
+            this.days.change();
+            this.days.trigger('dmy:update');
         };
 
         DayMonthYearCalendar.prototype.update_number_of_months = function() {
@@ -177,6 +186,7 @@
             }
             this.months.val(month);
             this.months.change();
+            this.months.trigger('dmy:update');
         };
 
         DayMonthYearCalendar.prototype.update_form_field = function() {
@@ -200,23 +210,23 @@
                 var dateFields = value.split('.');
                 var yearValue = parseInt(dateFields[2], 10);
                 if (this.years.find('option[value="' + yearValue + '"]').length > 0) {
-                	this.years.val(yearValue);
+                    this.years.val(yearValue);
                 } else {
-                	this.years.val(0);
+                    this.years.val(0);
                 }
                 this.update_number_of_months();
                 var monthValue = parseInt(dateFields[1], 10);
                 if (this.months.find('option[value="' + monthValue + '"]').length > 0) {
-                	this.months.val(monthValue);
+                    this.months.val(monthValue);
                 } else {
-                	this.months.val(0);
+                    this.months.val(0);
                 }
                 this.update_number_of_days();
                 var dayValue = parseInt(dateFields[0], 10);
                 if (this.days.find('option[value="' + dayValue + '"]').length > 0) {
-                	this.days.val(dayValue);
+                    this.days.val(dayValue);
                 } else {
-                	this.days.val(0);
+                    this.days.val(0);
                 }
             }
         };

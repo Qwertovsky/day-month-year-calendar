@@ -104,29 +104,40 @@
 
             this.bind_events();
             
-            this.form_field_jq.on('change', function () {
-                _this.container.find('select').unbind('change');
-                _this.load_form_field();
-                _this.bind_events();
-            });            
+            this.form_field_jq.bind('change', this.on_form_field_change);
 
             this.container.find('select').prop('disabled', this.disabled);
-            };
+        };
             
+
+        DayMonthYearCalendar.prototype.on_form_field_change = function() {
+            var calendar = $(this).data('dayMonthYearCalendar');
+            calendar.container.find('select').unbind('change');
+            calendar.load_form_field();
+            calendar.bind_events();
+        };
+
         DayMonthYearCalendar.prototype.bind_events = function() {
             var _this = this;
+            this.days.on('change', function () {
+                _this.update_form_field();
+                _this.days.trigger('dmy:update');
+            });
             this.months.on('change', function () {
                 _this.update_number_of_days();
                 _this.update_form_field();
+                _this.days.trigger('dmy:update');
+                _this.months.trigger('dmy:update');
             });
             this.years.on('change', function () {
                 _this.update_number_of_months();
+                _this.update_number_of_days();
                 _this.update_form_field();
+                _this.days.trigger('dmy:update');
+                _this.months.trigger('dmy:update');
+                _this.years.trigger('dmy:update');
             });
-            this.days.on('change', function () {
-                    _this.update_form_field();
-            });
-        }
+        };
 
         DayMonthYearCalendar.prototype.update_number_of_days = function() {
             var day = this.days.val() || 0;
@@ -156,8 +167,6 @@
                 day = minDay;
             }
             this.days.val(day);
-            this.days.change();
-            this.days.trigger('dmy:update');
         };
 
         DayMonthYearCalendar.prototype.update_number_of_months = function() {
@@ -185,8 +194,6 @@
                 month = minMonth;
             }
             this.months.val(month);
-            this.months.change();
-            this.months.trigger('dmy:update');
         };
 
         DayMonthYearCalendar.prototype.update_form_field = function() {
@@ -201,7 +208,9 @@
             } else {
                 this.form_field_jq.val('');
             }
+            this.form_field_jq.unbind('change', this.on_form_field_change);
             this.form_field_jq.change();
+            this.form_field_jq.bind('change', this.on_form_field_change);
         };
 
         DayMonthYearCalendar.prototype.load_form_field = function() {
@@ -228,6 +237,10 @@
                 } else {
                     this.days.val(0);
                 }
+
+                this.days.trigger('dmy:update');
+                this.months.trigger('dmy:update');
+                this.years.trigger('dmy:update');
             }
         };
 

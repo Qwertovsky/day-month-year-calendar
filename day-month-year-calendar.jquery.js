@@ -1,13 +1,10 @@
 /*
  * DayMonthYearCalendar, three selects calendar, should be applied to standart input field.
  * 
- * Copyright 2014 Qwertovsky
- * https://bitbucket.org/qwertovsky/day-month-year-calendar
+ * Copyright 2015 Qwertovsky
+ * https://github.com/Qwertovsky/day-month-year-calendar
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * MIT License
  *
  */
 
@@ -53,6 +50,8 @@
                 , monthsEmptyText: 'mm'
                 , yearsEmptyText: 'yyyy'
                 , hideInput: true
+                , dateFormatFunction: this.format_date
+                , dateParseFunction: this.parse_date
             };
             this.options.disabled = this.form_field_jq.prop('disabled');
             var container_props = {
@@ -87,7 +86,7 @@
             this.days = $(document.getElementById(daysId));
 
 
-            this.years.append($('<option selected value="0">' + this.options.yearsEmptyText + '</option>'));
+            this.years.append($('<option selected="selected" value="0" disabled="disabled">' + this.options.yearsEmptyText + '</option>'));
             for (var i = this.options.maxDate.getFullYear(); i >= this.options.minDate.getFullYear(); i--) {
                 this.years.append($('<option />').val(i).html(i));
             }
@@ -202,9 +201,8 @@
             var year = this.years.val();
 
             if (day > 0 && month > 0 && year > 0) {
-                this.form_field_jq.val(this.pad_date_field(day,2)
-                    + '.' + this.pad_date_field(month,2)
-                    + '.' + this.pad_date_field(year,4));
+                var date = new Date(year, month-1, day);
+                this.form_field_jq.val(this.options.dateFormatFunction(date));
             } else {
                 this.form_field_jq.val('');
             }
@@ -215,23 +213,23 @@
 
         DayMonthYearCalendar.prototype.load_form_field = function() {
             var value = this.form_field_jq.val();
-            if (value && value.length == 10) {
-                var dateFields = value.split('.');
-                var yearValue = parseInt(dateFields[2], 10);
+            var date = this.options.dateParseFunction(value);
+            if (date) {
+                var yearValue = date.getFullYear();
                 if (this.years.find('option[value="' + yearValue + '"]').length > 0) {
                     this.years.val(yearValue);
                 } else {
                     this.years.val(0);
                 }
                 this.update_number_of_months();
-                var monthValue = parseInt(dateFields[1], 10);
+                var monthValue = date.getMonth() + 1;
                 if (this.months.find('option[value="' + monthValue + '"]').length > 0) {
                     this.months.val(monthValue);
                 } else {
                     this.months.val(0);
                 }
                 this.update_number_of_days();
-                var dayValue = parseInt(dateFields[0], 10);
+                var dayValue = date.getDate();
                 if (this.days.find('option[value="' + dayValue + '"]').length > 0) {
                     this.days.val(dayValue);
                 } else {
@@ -248,12 +246,30 @@
             return new Date(year, month, 0).getDate();
         };
 
-        DayMonthYearCalendar.prototype.pad_date_field = function(value, size) {
-            return ('0000' + value).substr(-size); 
+        DayMonthYearCalendar.prototype.format_date = function(date) {
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            var resultString = ('0000' + day).substr(-2)
+                + '.' + ('0000' + month).substr(-2)
+                + '.' + ('0000' + year).substr(-4);
+            return resultString;
+        };
+
+        DayMonthYearCalendar.prototype.parse_date = function(dateString) {
+            var resultDate = undefined;
+            if (dateString && dateString.length == 10) {
+                var dateFields = dateString.split('.');
+                var yearValue = parseInt(dateFields[2], 10);
+                var monthValue = parseInt(dateFields[1], 10);
+                var dayValue = parseInt(dateFields[0], 10);
+                resultDate = new Date(yearValue, monthValue - 1, dayValue);
+            }
+            return resultDate;
         };
 
         DayMonthYearCalendar.prototype.append_options = function(select, min, max, keys, emptyText) {
-            select.append($('<option selected value="0">' + emptyText + '</option>'));
+            select.append($('<option selected="selected" value="0" disabled="disabled">' + emptyText + '</option>'));
             for (var i = min; i <= max; i++) {
                 select.append($('<option />').val(i).html(keys[i-1] || i));
             }

@@ -1,0 +1,26 @@
+{
+  "name": "day-month-year-calendar",
+  "version": "1.0.0",
+  "authors": [
+    "Qwertovsky <qwertovsky@gmail.com>"
+  ],
+  "description": "It is a jQuery plugin that creates three select boxes (day, month, year) for one input field with date",
+  "main": "day-month-year-calendar.jquery.js",
+  "keywords": [
+    "date"
+    "picker",
+    "calendar",
+    "select",
+    "day",
+    "month",
+    "year"
+  ],
+  "license": "MIT",
+  "homepage": "http://qwertovsky.github.io/day-month-year-calendar/",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "jquery": ">=1.7.0"
+  }
+}

@@ -52,7 +52,7 @@ body {
   box-sizing: border-box;
   color:#373737;
   background: #212121;
-  font-size: 16px;
+  font-size: 18px;
   font-family: 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -61,14 +61,16 @@ body {
 h1, h2, h3, h4, h5, h6 {
   margin: 10px 0;
   font-weight: 700;
-  color:#222222;
+  color:#555;
   font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
-  letter-spacing: -1px;
+  letter-spacing: 0px;
+
 }
 
 h1 {
   font-size: 36px;
   font-weight: 700;
+  letter-spacing: -1px;
 }
 
 h2 {
@@ -79,6 +81,7 @@ h2 {
 
 h3 {
   font-size: 24px;
+  border-bottom: 1px solid #ddd;
 }
 
 h4 {
@@ -157,37 +160,6 @@ p img {
   border: none;
 }
 
-pre, code {
-  width: 100%;
-  color: #222;
-  background-color: #fff;
-
-  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-  font-size: 14px;
-
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-}
-
-pre {
-  width: 100%;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,.1);
-  overflow: auto;
-}
-
-code {
-  padding: 3px;
-  margin: 0 3px;
-  box-shadow: 0 0 10px rgba(0,0,0,.1);
-}
-
-pre code {
-  display: block;
-  box-shadow: none;
-}
-
 blockquote {
   color: #666;
   margin-bottom: 20px;
@@ -237,6 +209,7 @@ table {
   border: 1px solid #373737;
   margin-bottom: 20px;
   text-align: left;
+  font-size: 0.9rem;
  }
 
 th {
@@ -266,7 +239,7 @@ Full-Width Styles
 
 .inner {
   position: relative;
-  max-width: 640px;
+  max-width: 900px;
   padding: 20px 10px;
   margin: 0 auto;
 }
@@ -301,18 +274,12 @@ Full-Width Styles
 
 #project_title {
   margin: 0;
-  color: #fff;
+  color: #333;
   font-size: 42px;
   font-weight: 700;
-  text-shadow: #111 0px 0px 10px;
 }
-
-#project_tagline {
-  color: #fff;
-  font-size: 24px;
-  font-weight: 300;
-  background: none;
-  text-shadow: #111 0px 0px 10px;
+#project_description {
+  margin-bottom: 30px;
 }
 
 #downloads {
@@ -355,9 +322,7 @@ Full-Width Styles
 }
 
 #main_content_wrap {
-  background: #f2f2f2;
-  border-top: 1px solid #111;
-  border-bottom: 1px solid #111;
+  background: #fbfbfb;
 }
 
 #main_content {
@@ -366,10 +331,56 @@ Full-Width Styles
 
 #footer_wrap {
   background: #212121;
+  font-size: 12px;
 }
 
+.example input
+, .example select {
+  font-size: 20px;
+  font-weight: bold;
+}
+.example input {
+  width: 49%;
+}
+.example .selects_container {
+  display: inline-block;
+  float: right;
+  width: 49%;
+}
+.example .selects_container div {
+  display: inline-block;
+}
+.example .selects_container .dmy-cal-days {
+  width: 20%;
+}
+.example .selects_container .dmy-cal-months {
+  width: 49%;
+}
+.example .selects_container .dmy-cal-years {
+  width: 29%;
+}
+.example .selects_container div select {
+  width: 100%;
+  font-size: 20px;
+}
+code {
+  font-size: 14px;
+}
 
-
+#download {
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    box-shadow: 1px 1px 5px -3px #666;
+    color: #555;
+    font-size: 14px;
+    padding: 8px 20px;
+    text-decoration: none;
+}
+#download:hover {
+  box-shadow: 1px 1px 6px -2px #666;
+  text-decoration: underline;
+}
 /*******************************************************************************
 Small Device Styles
 *******************************************************************************/
@@ -383,13 +394,9 @@ Small Device Styles
     display: none;
   }
 
-  .inner {
-    min-width: 320px;
-    max-width: 480px;
-  }
 
   #project_title {
-  font-size: 32px;
+    font-size: 32px;
   }
 
   h1 {
@@ -417,9 +424,31 @@ Small Device Styles
   }
 
   code, pre {
-    min-width: 320px;
     max-width: 480px;
     font-size: 11px;
   }
 
+  .example input {
+    width: 97%;
+  }
+  .example .selects_container {
+    display: block;
+    float: right;
+    width: 100%;
+  }
+
+  table {
+    font-size: 0.7rem;
+  }
+  th, td {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+  td {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+  .hide_small { 
+    display: none;
+  }
 }
